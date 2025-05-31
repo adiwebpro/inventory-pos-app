@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- ... (existing keys remain the same) ... -->
+    
+    <!-- Tambahkan permission description untuk iOS di sini -->
+    <key>NSCameraUsageDescription</key>
+    <string>Aplikasi membutuhkan akses kamera untuk mengambil foto produk</string>
+    
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Aplikasi membutuhkan akses galeri untuk memilih foto produk</string>
+    
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Aplikasi mungkin membutuhkan akses mikrofon jika mengambil video</string>
+    
+    <!-- Untuk iOS 14+ tambahkan ini jika ingin memilih gambar dengan batasan -->
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Aplikasi membutuhkan izin untuk menyimpan gambar ke galeri</string>
+    
+    <!-- ... (rest of your existing keys) ... -->
+</dict>
+</plist>
