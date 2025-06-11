@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.109.66:8000/api';
+  static const String baseUrl = 'http://192.168.188.66:8000/api';
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<Map<String, String>> _getHeaders({
@@ -108,4 +108,6 @@ class ApiService {
   Future<http.Response> getActivities() => get('activities');
   Future<http.Response> getStaffPerformance() =>
       get('reports/staff-performance');
+
+  Future createProduct(Map<String, Object> newProduct) async {}
 }
