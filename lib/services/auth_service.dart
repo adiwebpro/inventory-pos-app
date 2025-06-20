@@ -18,7 +18,7 @@ class AuthService with ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.188.66:8000/api/login'),
+        Uri.parse('http://10.139.58.37:8000/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
       );
@@ -52,7 +52,7 @@ class AuthService with ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.188.66:8000/api/register'),
+        Uri.parse('http://10.139.58.37:8000/api/register'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'name': name,

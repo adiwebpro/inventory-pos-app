@@ -8,7 +8,6 @@ import 'package:pos_inventory_app/services/api_service.dart';
 import 'package:pos_inventory_app/services/auth_service.dart';
 import 'package:pos_inventory_app/screens/product_management_screen.dart';
 import 'package:pos_inventory_app/screens/stock_report_screen.dart';
-// import layar stok kosong
 import 'add_product_page.dart';
 
 class StockCounterScreen extends StatefulWidget {
@@ -65,6 +64,57 @@ class _StockCounterScreenState extends State<StockCounterScreen> {
     }
   }
 
+  Future<void> _editProduct(
+    BuildContext context,
+    Map<String, dynamic> product,
+  ) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => AddProductPage(productData: product, isEditMode: true),
+      ),
+    );
+    fetchProducts();
+  }
+
+  Future<void> _deleteProduct(BuildContext context, String productId) async {
+    bool confirmDelete = await showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text('Hapus Produk'),
+            content: Text('Yakin ingin menghapus produk ini?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Batal'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text('Hapus', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
+    );
+
+    if (confirmDelete == true) {
+      try {
+        final response = await apiService.deleteProduct(productId);
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Produk berhasil dihapus')));
+          fetchProducts();
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Gagal menghapus: $e')));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
@@ -76,7 +126,6 @@ class _StockCounterScreenState extends State<StockCounterScreen> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
-            // agar tidak overflow saat keyboard muncul
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -86,7 +135,7 @@ class _StockCounterScreenState extends State<StockCounterScreen> {
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           "POS",
                           style: TextStyle(
@@ -104,14 +153,11 @@ class _StockCounterScreenState extends State<StockCounterScreen> {
                         ),
                       ],
                     ),
+
                     Row(
                       children: const [
                         Icon(Icons.notifications_none, size: 28),
                         SizedBox(width: 12),
-                        CircleAvatar(
-                          radius: 18,
-                          backgroundImage: AssetImage('assets/user.png'),
-                        ),
                       ],
                     ),
                   ],
@@ -227,14 +273,12 @@ class _StockCounterScreenState extends State<StockCounterScreen> {
                     const SizedBox(width: 12),
                     ElevatedButton.icon(
                       onPressed: () async {
-                        // Navigate ke AddProductPage, tunggu sampai selesai
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => AddProductPage(),
                           ),
                         );
-                        // Setelah kembali, refresh produk
                         await fetchProducts();
                       },
                       icon: const Icon(Icons.add),
@@ -255,10 +299,10 @@ class _StockCounterScreenState extends State<StockCounterScreen> {
 
                 const SizedBox(height: 20),
 
-                // Daftar Produk hasil filter
+                // Daftar Produk
                 ListView.builder(
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+                  physics: NeverScrollableScrollPhysics(),
                   itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
                     final product = filteredProducts[index];
@@ -266,14 +310,38 @@ class _StockCounterScreenState extends State<StockCounterScreen> {
                       margin: const EdgeInsets.symmetric(vertical: 6),
                       child: ListTile(
                         title: Text(product['name']),
-                        subtitle: Text('Stok: ${product['stock']}'),
-                        trailing:
-                            product['stock'] == 0
-                                ? Icon(
-                                  Icons.warning,
-                                  color: Colors.blue.shade600,
-                                )
-                                : null,
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Stok: ${product['stock']}'),
+                            Text('Harga: Rp ${product['price'] ?? 0}'),
+                          ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (product['stock'] == 0)
+                              Icon(Icons.warning, color: Colors.blue.shade600),
+                            IconButton(
+                              icon: Icon(
+                                Icons.edit,
+                                color: Colors.blue.shade600,
+                              ),
+                              onPressed: () {
+                                _editProduct(context, product);
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                _deleteProduct(
+                                  context,
+                                  product['id'].toString(),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

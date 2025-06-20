@@ -23,6 +23,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   }
 
   Future<void> _fetchUsers() async {
+    setState(() => _isLoading = true);
     try {
       final api = Provider.of<ApiService>(context, listen: false);
       final response = await api.get('users');
@@ -32,134 +33,119 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           _isLoading = false;
         });
       } else {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memuat data pengguna: ${response.statusCode}')),
-        );
+        throw Exception('Gagal mengambil data pengguna');
       }
     } catch (e) {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Gagal memuat data pengguna')),
+        SnackBar(content: Text('Terjadi kesalahan: $e')),
       );
     }
   }
 
-  Future<void> _deleteUser(String userId) async {
+  Future<void> _deleteUser(int id) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Konfirmasi'),
+        content: const Text('Yakin ingin menghapus pengguna ini?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Batal')),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Hapus')),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
     try {
       final api = Provider.of<ApiService>(context, listen: false);
-      final response = await api.delete('users/$userId');
-      if (response.statusCode == 204) {
+      final response = await api.delete('users/$id');
+      if (response.statusCode == 200) {
         _fetchUsers();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Pengguna berhasil dihapus')),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menghapus pengguna: ${response.statusCode}')),
-        );
+        throw Exception('Gagal menghapus pengguna');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Gagal menghapus pengguna')),
+        SnackBar(content: Text('Terjadi kesalahan: $e')),
       );
     }
+  }
+
+  void _navigateToForm({Map<String, dynamic>? user}) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => UserFormScreen(user: user)),
+    );
+    if (result == true) {
+      _fetchUsers();
+    }
+  }
+
+  Widget _buildUserCard(Map<String, dynamic> user) {
+    return Card(
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: const CircleAvatar(
+          backgroundColor: Colors.blueAccent,
+          child: Icon(Icons.person, color: Colors.white),
+        ),
+        title: Text(
+          user['name'] ?? '',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          '${user['email']} • ${user['role'].toString().toUpperCase()}',
+          style: GoogleFonts.poppins(fontSize: 13),
+        ),
+        trailing: PopupMenuButton<String>(
+          onSelected: (value) {
+            if (value == 'edit') {
+              _navigateToForm(user: user);
+            } else if (value == 'delete') {
+              _deleteUser(user['id']);
+            }
+          },
+          itemBuilder: (context) => [
+            const PopupMenuItem(value: 'edit', child: Text('Edit')),
+            const PopupMenuItem(value: 'delete', child: Text('Hapus')),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Kelola Pengguna'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: _fetchUsers),
-        ],
+        title: const Text('Manajemen Pengguna'),
+        centerTitle: true,
+        backgroundColor: Colors.blue.shade600,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        child: Column(
-          children: [
-            Text(
-              "Daftar Pengguna",
-              style: GoogleFonts.poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue.shade900,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: _fetchUsers,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(12),
+                itemCount: _users.length,
+                itemBuilder: (context, index) {
+                  return _buildUserCard(_users[index]);
+                },
               ),
             ),
-            const SizedBox(height: 16),
-            _isLoading
-                ? const Expanded(child: Center(child: CircularProgressIndicator()))
-                : Expanded(
-                    child: ListView.builder(
-                      itemCount: _users.length,
-                      itemBuilder: (context, index) {
-                        final user = _users[index];
-                        return Card(
-                          elevation: 4,
-                          margin: const EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(16),
-                            title: Text(
-                              user['name'],
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            subtitle: Text(
-                              '${user['email']} • ${user['role']}',
-                              style: GoogleFonts.poppins(color: Colors.grey[700]),
-                            ),
-                            onTap: () async {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => UserFormScreen(user: user),
-                                ),
-                              );
-                              if (result == true) {
-                                _fetchUsers();
-                              }
-                            },
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete),
-                              color: Colors.red,
-                              onPressed: () =>
-                                  _deleteUser(user['id'].toString()),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const UserFormScreen()),
-          );
-          if (result == true) {
-            _fetchUsers();
-          }
-        },
-        backgroundColor: Colors.blue.shade700,
-        child: const Icon(Icons.add),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _navigateToForm(),
+        icon: const Icon(Icons.add),
+        label: const Text('Tambah Pengguna'),
+        backgroundColor: Colors.blue.shade600,
       ),
     );
   }

@@ -1,4 +1,3 @@
-// lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pos_inventory_app/services/auth_service.dart';
@@ -8,6 +7,7 @@ import 'package:pos_inventory_app/screens/cashier_screen.dart';
 import 'package:pos_inventory_app/screens/stock_counter_screen.dart';
 import 'package:pos_inventory_app/screens/owner_screen.dart';
 import 'package:pos_inventory_app/screens/cart_screen.dart';
+import 'package:pos_inventory_app/screens/add_product_page.dart'; // pastikan file ini diimpor
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -38,9 +38,9 @@ class HomeScreen extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.shopping_cart),
           onPressed: () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const CartScreen()));
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const CartScreen()),
+            );
           },
         ),
         IconButton(
@@ -74,17 +74,29 @@ class HomeScreen extends StatelessWidget {
         actions: _getAppBarActions(context, authService, user),
       ),
       body: _getRoleScreen(user),
-      floatingActionButton:
-          user?['role'] == 'buyer'
+      floatingActionButton: (user?['role'] == 'admin' || user?['role'] == 'stock_counter')
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const AddProductPage(),
+                  ),
+                );
+              },
+              backgroundColor: Colors.blue[700],
+              child: const Icon(Icons.add),
+            )
+          : (user?['role'] == 'buyer'
               ? FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(
-                    context,
-                  ).push(MaterialPageRoute(builder: (_) => const CartScreen()));
-                },
-                child: const Icon(Icons.shopping_cart),
-              )
-              : null,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const CartScreen()),
+                    );
+                  },
+                  backgroundColor: Colors.blue[700],
+                  child: const Icon(Icons.shopping_cart),
+                )
+              : null),
     );
   }
 }
