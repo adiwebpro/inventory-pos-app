@@ -21,7 +21,7 @@ class _ProcessPaymentScreenState extends State<ProcessPaymentScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
+            colors: [Color(0xFFE0F2F1), Color(0xFFB2DFDB)], // Warna teal lembut
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -43,7 +43,7 @@ class _ProcessPaymentScreenState extends State<ProcessPaymentScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade900,
+                    color: Colors.teal.shade900, // Warna diganti
                   ),
                 ),
               ],
@@ -69,9 +69,8 @@ class _ProcessPaymentScreenState extends State<ProcessPaymentScreen> {
                           labelText: 'ID Transaksi',
                           border: OutlineInputBorder(),
                         ),
-                        validator:
-                            (value) =>
-                                value!.isEmpty ? 'Masukkan ID Transaksi' : null,
+                        validator: (value) =>
+                            value!.isEmpty ? 'Masukkan ID Transaksi' : null,
                         onSaved: (value) => _transactionId = value!,
                       ),
                       const SizedBox(height: 16),
@@ -92,8 +91,8 @@ class _ProcessPaymentScreenState extends State<ProcessPaymentScreen> {
                             child: Text('E-Wallet'),
                           ),
                         ],
-                        onChanged:
-                            (value) => setState(() => _paymentMethod = value!),
+                        onChanged: (value) =>
+                            setState(() => _paymentMethod = value!),
                         decoration: const InputDecoration(
                           labelText: 'Metode Pembayaran',
                           border: OutlineInputBorder(),
@@ -102,30 +101,29 @@ class _ProcessPaymentScreenState extends State<ProcessPaymentScreen> {
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
-                        child:
-                            _isLoading
-                                ? const Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                                : ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue.shade700,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
+                        child: _isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal, // Warna tombol
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
                                   ),
-                                  onPressed: _processPayment,
-                                  child: Text(
-                                    'Proses Pembayaran',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                    ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
+                                onPressed: _processPayment,
+                                child: Text(
+                                  'Proses Pembayaran',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                       ),
                     ],
                   ),

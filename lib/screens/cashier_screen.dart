@@ -15,11 +15,7 @@ class CashierScreen extends StatelessWidget {
 
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+        color: Colors.teal, // ✅ Ubah background ke teal
       ),
       child: SafeArea(
         child: Padding(
@@ -42,7 +38,7 @@ class CashierScreen extends StatelessWidget {
                       Icon(
                         Icons.point_of_sale,
                         size: 60,
-                        color: Colors.blue.shade700,
+                        color: Colors.teal.shade700, // ✅ Ganti warna ikon
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -50,7 +46,7 @@ class CashierScreen extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: Colors.blue.shade900,
+                          color: Colors.teal.shade900, // ✅ Ganti warna teks
                         ),
                       ),
                     ],
@@ -119,7 +115,7 @@ class CashierScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 40, color: Colors.blue.shade700),
+              Icon(icon, size: 40, color: Colors.teal.shade700), // ✅ Ganti warna ikon
               const SizedBox(height: 12),
               Text(
                 title,
@@ -127,7 +123,7 @@ class CashierScreen extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: Colors.blueGrey.shade800,
+                  color: Colors.teal.shade800, // ✅ Ganti warna teks
                 ),
               ),
             ],

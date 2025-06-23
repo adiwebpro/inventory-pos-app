@@ -69,7 +69,7 @@ class _AuthScreenState extends State<AuthScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
+            colors: [Color(0xFFE0F2F1), Color(0xFFB2DFDB)], // gradasi hijau toska
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -82,15 +82,15 @@ class _AuthScreenState extends State<AuthScreen> {
                 Icon(
                   Icons.inventory_2_rounded,
                   size: 80,
-                  color: Colors.blue.shade700,
+                  color: Colors.teal,
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  _isLogin ? 'Inventory-POS' :  'Buat Account',
+                  _isLogin ? 'Inventory-POS' : 'Buat Account',
                   style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade900,
+                    color: Colors.teal,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -113,11 +113,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                     labelText: 'Full Name',
                                     border: OutlineInputBorder(),
                                   ),
-                                  validator:
-                                      (val) =>
-                                          val!.isEmpty
-                                              ? 'Enter your name'
-                                              : null,
+                                  validator: (val) =>
+                                      val!.isEmpty ? 'Enter your name' : null,
                                   onSaved: (val) => _name = val!,
                                 ),
                                 const SizedBox(height: 16),
@@ -149,10 +146,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                       child: Text('Owner'),
                                     ),
                                   ],
-                                  onChanged:
-                                      (val) => setState(() {
-                                        _role = val!;
-                                      }),
+                                  onChanged: (val) =>
+                                      setState(() => _role = val!),
                                 ),
                                 const SizedBox(height: 16),
                               ],
@@ -162,9 +157,8 @@ class _AuthScreenState extends State<AuthScreen> {
                               labelText: 'Email',
                               border: OutlineInputBorder(),
                             ),
-                            validator:
-                                (val) =>
-                                    val!.isEmpty ? 'Enter your email' : null,
+                            validator: (val) =>
+                                val!.isEmpty ? 'Enter your email' : null,
                             onSaved: (val) => _email = val!,
                           ),
                           const SizedBox(height: 16),
@@ -174,55 +168,50 @@ class _AuthScreenState extends State<AuthScreen> {
                               border: OutlineInputBorder(),
                             ),
                             obscureText: true,
-                            validator:
-                                (val) =>
-                                    val!.length < 6
-                                        ? 'Password must be at least 6 chars'
-                                        : null,
+                            validator: (val) => val!.length < 6
+                                ? 'Password must be at least 6 chars'
+                                : null,
                             onSaved: (val) => _password = val!,
                           ),
                           const SizedBox(height: 24),
                           Consumer<AuthService>(
-                            builder:
-                                (context, authService, _) =>
-                                    authService.isLoading
-                                        ? const CircularProgressIndicator()
-                                        : SizedBox(
-                                          width: double.infinity,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.blue.shade600,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 16,
-                                                  ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
+                            builder: (context, authService, _) =>
+                                authService.isLoading
+                                    ? const CircularProgressIndicator()
+                                    : SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.teal,
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 16,
                                             ),
-                                            onPressed: _submit,
-                                            child: Text(
-                                              _isLogin ? 'Login' : 'Register',
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.white,
-                                              ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          onPressed: _submit,
+                                          child: Text(
+                                            _isLogin ? 'Login' : 'Register',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white,
                                             ),
                                           ),
                                         ),
+                                      ),
                           ),
                           const SizedBox(height: 16),
                           TextButton(
-                            onPressed:
-                                () => setState(() => _isLogin = !_isLogin),
+                            onPressed: () =>
+                                setState(() => _isLogin = !_isLogin),
                             child: Text(
                               _isLogin
-                                  ? "Don't have an account? Register"
-                                  : "Already have an account? Login",
+                                  ? "Belum punya akun ? Register"
+                                  : "Sudah Punya akun? Login",
                               style: GoogleFonts.poppins(
-                                color: Colors.blue.shade700,
+                                color: Colors.teal,
                               ),
                             ),
                           ),

@@ -71,6 +71,8 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('POS Inventory'),
+        backgroundColor:
+            (user?['role'] == 'buyer') ? Colors.teal : null, // ✅ Ubah warna AppBar buyer
         actions: _getAppBarActions(context, authService, user),
       ),
       body: _getRoleScreen(user),
@@ -83,7 +85,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 );
               },
-              backgroundColor: Colors.blue[700],
+              backgroundColor: Colors.teal,
               child: const Icon(Icons.add),
             )
           : (user?['role'] == 'buyer'
@@ -93,7 +95,7 @@ class HomeScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => const CartScreen()),
                     );
                   },
-                  backgroundColor: Colors.blue[700],
+                  backgroundColor: Colors.teal,
                   child: const Icon(Icons.shopping_cart),
                 )
               : null),

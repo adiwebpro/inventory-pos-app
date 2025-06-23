@@ -37,23 +37,30 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       }
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Terjadi kesalahan: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
     }
   }
 
   Future<void> _deleteUser(int id) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Konfirmasi'),
-        content: const Text('Yakin ingin menghapus pengguna ini?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Batal')),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Hapus')),
-        ],
-      ),
+      builder:
+          (_) => AlertDialog(
+            title: const Text('Konfirmasi'),
+            content: const Text('Yakin ingin menghapus pengguna ini?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Batal'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Hapus'),
+              ),
+            ],
+          ),
     );
 
     if (confirm != true) return;
@@ -70,9 +77,9 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         throw Exception('Gagal menghapus pengguna');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Terjadi kesalahan: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
     }
   }
 
@@ -112,10 +119,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               _deleteUser(user['id']);
             }
           },
-          itemBuilder: (context) => [
-            const PopupMenuItem(value: 'edit', child: Text('Edit')),
-            const PopupMenuItem(value: 'delete', child: Text('Hapus')),
-          ],
+          itemBuilder:
+              (context) => [
+                const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                const PopupMenuItem(value: 'delete', child: Text('Hapus')),
+              ],
         ),
       ),
     );
@@ -127,25 +135,26 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       appBar: AppBar(
         title: const Text('Manajemen Pengguna'),
         centerTitle: true,
-        backgroundColor: Colors.blue.shade600,
+        backgroundColor: Colors.teal,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _fetchUsers,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(12),
-                itemCount: _users.length,
-                itemBuilder: (context, index) {
-                  return _buildUserCard(_users[index]);
-                },
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                onRefresh: _fetchUsers,
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: _users.length,
+                  itemBuilder: (context, index) {
+                    return _buildUserCard(_users[index]);
+                  },
+                ),
               ),
-            ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _navigateToForm(),
         icon: const Icon(Icons.add),
         label: const Text('Tambah Pengguna'),
-        backgroundColor: Colors.blue.shade600,
+        backgroundColor: Colors.teal,
       ),
     );
   }
